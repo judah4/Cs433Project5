@@ -6,6 +6,12 @@
 
 #define PAGEREFS 20
 
+struct lruAddress
+{
+	int address;
+	int lastUsed;
+};
+
 //Fifo page replacement
 //returns page faults
 int fifo(int pageRefs[], int frameCount)
@@ -33,12 +39,69 @@ int fifo(int pageRefs[], int frameCount)
 			}
 		}
 
+		//replace if not found
 		if(foundPage == false)
 		{
 			fault++;
 			frames[lastIndex] = page;
 			lastIndex++;
 			lastIndex %= frameCount;
+		}
+
+
+	}
+
+
+	free(frames);
+
+	return fault;
+}
+
+//LRU page replacement
+//returns page faults
+int lru(int pageRefs[], int frameCount)
+{
+	lruAddress *frames = (lruAddress*)malloc(frameCount * sizeof(lruAddress));
+
+	//reset to empty
+	int frameCnt;
+	int pageCnt;
+	for (frameCnt = 0; frameCnt < frameCount; frameCnt++) {
+		frames[frameCnt].address = -1;
+		frames[frameCnt].lastUsed = 0;
+	}
+
+	int fault = 0;
+	for (pageCnt = 0; pageCnt < PAGEREFS; pageCnt++) {
+
+		int page = pageRefs[pageCnt];
+
+		bool foundPage = false;
+		for (frameCnt = 0; frameCnt < frameCount; frameCnt++) {
+			if (frames[frameCnt].address == page) {
+				frames[frameCnt].lastUsed++;
+				foundPage = true;
+			}
+			else
+			{
+				frames[frameCnt].lastUsed--;
+			}
+		}
+
+		//replace if not found
+		if (foundPage == false)
+		{
+			fault++;
+			int lowestIndex = 0;
+			for (frameCnt = 0; frameCnt < frameCount; frameCnt++) {
+				if(frames[frameCnt].lastUsed < frames[lowestIndex].lastUsed)
+				{
+					lowestIndex = frameCnt;
+				}
+			}
+
+			frames[lowestIndex].address = page;
+			frames[lowestIndex].lastUsed = 0;
 		}
 
 
@@ -97,7 +160,9 @@ int main(int argc, char *argv[])
 
 
 	int fifoFaults = fifo(pageRefs, frames);
+	int lruFaults = lru(pageRefs, frames);
 	printf("FIFO Page Faults = %d\n", fifoFaults);
+	printf("LRU Page Faults = %d\n", lruFaults);
 
 	scanf_s("%d", &frames);
 
