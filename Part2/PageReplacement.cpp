@@ -113,6 +113,76 @@ int lru(int pageRefs[], int frameCount)
 	return fault;
 }
 
+//Optimal page replacement
+//returns page faults
+int optimal(int pageRefs[], int frameCount)
+{
+	int *frames = (int*)malloc(frameCount * sizeof(int));
+
+	int useCountRemaining[10];
+	
+	//reset to empty
+	int frameCnt;
+	int pageCnt;
+	for (frameCnt = 0; frameCnt < frameCount; frameCnt++) {
+		frames[frameCnt] = -1;
+	}
+
+	//reset useCounts
+	for (pageCnt = 0; pageCnt < 10; pageCnt++) {
+		useCountRemaining[pageCnt] = 0;
+	}
+
+	//set remaining page counts
+	for (pageCnt = 0; pageCnt < PAGEREFS; pageCnt++) {
+		useCountRemaining[pageRefs[pageCnt]]++;
+	}
+
+	int fault = 0;
+	for (pageCnt = 0; pageCnt < PAGEREFS; pageCnt++) {
+
+		int page = pageRefs[pageCnt];
+		useCountRemaining[page]--;
+		bool foundPage = false;
+		for (frameCnt = 0; frameCnt < frameCount; frameCnt++) {
+			if (frames[frameCnt] == page) {
+				foundPage = true;
+				break;
+			}
+		}
+
+		//replace if not found
+		if (foundPage == false)
+		{
+			fault++;
+			int lowestRemainingIndex = 0;
+
+			//check empty
+			for (frameCnt = 0; frameCnt < frameCount; frameCnt++) {
+				if (frames[frameCnt] == -1) {
+					frames[frameCnt] = page;
+					break;
+				}
+				else if (useCountRemaining[frames[frameCnt]] < useCountRemaining[frames[lowestRemainingIndex]])
+				{
+					//find lowest remaining references
+					lowestRemainingIndex = frameCnt;
+				}
+			}
+
+			frames[lowestRemainingIndex] = page;
+
+		}
+
+
+	}
+
+
+	free(frames);
+
+	return fault;
+}
+
 int main(int argc, char *argv[])
 {
 
@@ -161,8 +231,10 @@ int main(int argc, char *argv[])
 
 	int fifoFaults = fifo(pageRefs, frames);
 	int lruFaults = lru(pageRefs, frames);
+	int optimalFaults = optimal(pageRefs, frames);
 	printf("FIFO Page Faults = %d\n", fifoFaults);
 	printf("LRU Page Faults = %d\n", lruFaults);
+	printf("Optimal Page Faults = %d\n", optimalFaults);
 
 	scanf_s("%d", &frames);
 
