@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+Cs433Project5/Debug/
+
+Cs433Project5/\.vs/
