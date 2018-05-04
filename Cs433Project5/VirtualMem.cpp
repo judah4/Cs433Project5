@@ -18,14 +18,14 @@ int main(int argc, char *argv[])
 	printf( "5/4/2018\n");
 	printf( "Virtual Addressing\n");
 
-	unsigned int virtualAddress = atoi(argv[1]);
-
 	//check for arg
 	if ((argc < 2))
 	{
 		printf("Please add arguments for virtual address, producers and consumers");
 		return -1;
 	}
+
+	unsigned int virtualAddress = atoi(argv[1]);
 
 	//calc page, calc offset
 	unsigned int pageNumber = virtualAddress / pageSize;
