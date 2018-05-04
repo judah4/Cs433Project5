@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 	const unsigned int pageSize = 4096;
 
 
-	printf("Judah Perez, CS 433, Project 5 Part A\n");
+	printf("Judah Perez, CS 433, Project 5 Part 1\n");
 	printf( "5/4/2018\n");
 	printf( "Virtual Addressing\n");
 
