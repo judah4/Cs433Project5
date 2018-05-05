@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
 	printf("Enter number of page frames from 1 to 7. \n");
 
 	int frames;
-	scanf_s("%d", &frames);
+	scanf("%d", &frames);
 
 	if (frames > 7)
 	{
@@ -236,7 +236,6 @@ int main(int argc, char *argv[])
 	printf("LRU Page Faults = %d\n", lruFaults);
 	printf("Optimal Page Faults = %d\n", optimalFaults);
 
-	scanf_s("%d", &frames);
 
 	return 0;
 }
